@@ -317,11 +317,24 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
+      font-family: 'JetBrains Mono', monospace;
+      position: relative;
     }
 
-    .joke-text.active {
+    .joke-text.typing {
       color: var(--accent-2);
       transform: scale(1.05);
+    }
+
+    .joke-text.typing::after {
+      content: '|';
+      animation: blink 1s infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
     }
 
     .productivity-killer {
@@ -337,18 +350,76 @@
         padding: 1rem;
       }
       
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .header-section {
+        margin-bottom: 2rem;
+      }
+      
       .button-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
       }
       
+      .button-card {
+        border-radius: 16px;
+      }
+      
+      .card-content {
+        padding: 1.5rem;
+      }
+      
+      .card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      .card-title {
+        font-size: 1.2rem;
+      }
+      
+      .card-description {
+        font-size: 0.85rem;
+      }
+      
       .stats-bar {
-        gap: 1rem;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
       }
       
       .stat-item {
         padding: 0.75rem 1rem;
-        min-width: 100px;
+        min-width: 90px;
+        border-radius: 10px;
+      }
+      
+      .stat-number {
+        font-size: 1.2rem;
+      }
+      
+      .stat-label {
+        font-size: 0.8rem;
+      }
+      
+      .joke-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+      }
+      
+      .joke-text {
+        font-size: 1rem;
+        min-height: 2.5rem;
+        text-align: center;
+        line-height: 1.4;
       }
       
       .mode-toggle {
@@ -356,6 +427,43 @@
         right: 1rem;
         width: 50px;
         height: 50px;
+        font-size: 1.2rem;
+      }
+      
+      /* Better touch targets */
+      .button-card:hover {
+        transform: translateY(-4px);
+      }
+      
+      .button-card:active {
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0.75rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .stats-bar {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .stat-item {
+        width: 100%;
+        max-width: 200px;
+        text-align: center;
+      }
+      
+      .joke-text {
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
       }
     }
 
@@ -428,7 +536,7 @@
       </a>
 
       <a class="button-card" href="https://web.whatsapp.com" target="_blank" 
-         onmouseover="updateJoke('Checking if anyone messaged... they didn\\'t')" 
+         onmouseover="updateJoke('Checking if anyone messaged... they did not')" 
          onclick="incrementClicks()">
         <div class="card-content">
           <span class="card-icon">💬</span>
@@ -458,7 +566,7 @@
       </a>
 
       <a class="button-card" href="https://www.google.com" target="_blank" 
-         onmouseover="updateJoke('Googling \\'how to be productive\\' instead of being productive')" 
+         onmouseover="updateJoke('Googling how to be productive instead of being productive')" 
          onclick="incrementClicks()">
         <div class="card-content">
           <span class="card-icon">🔍</span>
@@ -470,7 +578,7 @@
 
     <div class="joke-section">
       <div class="joke-text" id="jokeText">
-        Hover over a button to unlock a new level of <span class="productivity-killer">productivity destruction</span>
+        Hover over a button to unlock a new level of productivity destruction
       </div>
     </div>
   </div>
@@ -487,18 +595,53 @@
       document.getElementById('timeWasted').textContent = timeWasted.toLocaleString();
     }, 1000);
 
-    // Joke system
+    // Joke system with typing animation
+    let currentJoke = '';
+    let jokeTimeout;
+    
+    function typeText(element, text, speed = 50) {
+      element.classList.add('typing');
+      element.textContent = '';
+      let i = 0;
+      
+      const typeChar = () => {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(typeChar, speed);
+        } else {
+          setTimeout(() => {
+            element.classList.remove('typing');
+          }, 1000);
+        }
+      };
+      
+      typeChar();
+    }
+
     function updateJoke(text) {
       hoversCount++;
       document.getElementById('hoversCount').textContent = hoversCount.toLocaleString();
       
-      const jokeElement = document.getElementById('jokeText');
-      jokeElement.textContent = text;
-      jokeElement.classList.add('active');
+      if (currentJoke === text) return; // Don't retype the same joke
+      currentJoke = text;
       
-      setTimeout(() => {
-        jokeElement.classList.remove('active');
-      }, 3000);
+      const jokeElement = document.getElementById('jokeText');
+      
+      // Clear any existing timeout
+      if (jokeTimeout) {
+        clearTimeout(jokeTimeout);
+      }
+      
+      // Start typing animation
+      typeText(jokeElement, text, 30);
+      
+      // Reset to default after 5 seconds
+      jokeTimeout = setTimeout(() => {
+        const defaultText = 'Hover over a button to unlock a new level of productivity destruction';
+        typeText(jokeElement, defaultText, 25);
+        currentJoke = '';
+      }, 5000);
     }
 
     function incrementClicks() {
