@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distraction Hub</title>
+  <style>
+    @keyframes neon-glow {
+      0% { box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff, 0 0 20px #0ff; }
+      50% { box-shadow: 0 0 10px #ff0, 0 0 15px #ff0, 0 0 20px #ff0, 0 0 25px #ff0; }
+      100% { box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff, 0 0 20px #0ff; }
+    }
+
+    body {
+      background: #1f1f1f;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+
+    a.button {
+      display: block;
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      transform: scale(1);
+    }
+
+    a.button:hover {
+      border-image: linear-gradient(45deg, #0ff, #f0f, #ff0, #0ff);
+      border-image-slice: 1;
+      animation: neon-glow 1s infinite;
+      color: #0ff;
+      transform: scale(1.1);
+    }
+
+    .joke {
+      margin-top: 2rem;
+      font-style: italic;
+      font-size: 1.2rem;
+      transition: all 0.2s;
+      min-height: 2rem;
+    }
+
+    .video-container {
+      margin-top: 2rem;
+    }
+
+    iframe {
+      border: none;
+      border-radius: 12px;
+      width: 320px;
+      height: 180px;
+    }
+
+    .shame {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 Distraction Hub</h1>
+
+  <div class="button-grid">
+    <a class="button" href="https://www.youtube.com" target="_blank" onmouseover="updateText('Time to fall into a YouTube hole.'); ">YouTube</a>
+    <a class="button" href="https://www.poki.com" target="_blank" onmouseover="updateText('Games that eat hours like candy.'); ">Poki Games</a>
+    <a class="button" href="https://web.whatsapp.com" target="_blank" onmouseover="updateText('Pretending to be social.'); ">WhatsApp Web</a>
+    <a class="button" href="https://www.reddit.com" target="_blank" onmouseover="updateText('Scrolling endlessly. Worth it.'); ">Reddit</a>
+    <a class="button" href="https://chat.openai.com" target="_blank" onmouseover="updateText('Talking to a robot instead of doing your work.');">ChatGPT</a>
+    <a class="button" href="https://www.google.com" target="_blank" onmouseover="updateText('Procrastinate.');">Google</a>
+  </div>
+
+  <div class="joke" id="joke">Hover on a button to feel the rot set in...</div>
+  <div class="shame" id="shameCounter">Shame Counter: 0s</div>
+
+  <script>
+    const updateText = (text) => {
+      document.getElementById('joke').innerText = text;
+    };
+
+    let counter = 0;
+    setInterval(() => {
+      counter++;
+      document.getElementById("shameCounter").innerText = `Shame Counter: ${counter}s`;
+    }, 1000);
+  </script>
+</body>
+</html>
