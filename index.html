@@ -2,103 +2,570 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Distraction Hub</title>
   <style>
-    @keyframes neon-glow {
-      0% { box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff, 0 0 20px #0ff; }
-      50% { box-shadow: 0 0 10px #ff0, 0 0 15px #ff0, 0 0 20px #ff0, 0 0 25px #ff0; }
-      100% { box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff, 0 0 20px #0ff; }
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap');
+    
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --accent-1: #00ff88;
+      --accent-2: #ff0080;
+      --accent-3: #0080ff;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --shadow-glow: 0 8px 32px rgba(0, 255, 136, 0.1);
+    }
+
+    body.light {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6c757d;
+      --glass-bg: rgba(0, 0, 0, 0.03);
+      --glass-border: rgba(0, 0, 0, 0.08);
+      --shadow-glow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background: #1f1f1f;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    /* Animated background particles */
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--accent-1);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float 20s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 2rem;
+      text-align: center;
+    }
+
+    .header-section {
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: glow 3s ease-in-out infinite alternate;
+      position: relative;
+    }
+
+    @keyframes glow {
+      0% {
+        filter: drop-shadow(0 0 10px var(--accent-1));
+      }
+      50% {
+        filter: drop-shadow(0 0 20px var(--accent-2));
+      }
+      100% {
+        filter: drop-shadow(0 0 15px var(--accent-3));
+      }
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out 0.5s forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      min-width: 120px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .stat-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-1);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
     }
 
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      max-width: 600px;
-      margin: 2rem auto;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
     }
 
-    a.button {
-      display: block;
-      background: #111;
-      color: #fff;
-      padding: 1rem;
-      border-radius: 12px;
+    .button-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
       text-decoration: none;
-      font-weight: bold;
-      border: 2px solid transparent;
+      color: var(--text-primary);
+      display: block;
+      opacity: 0;
+      animation: slideInUp 0.6s ease-out forwards;
+    }
+
+    .button-card:nth-child(1) { animation-delay: 0.1s; }
+    .button-card:nth-child(2) { animation-delay: 0.2s; }
+    .button-card:nth-child(3) { animation-delay: 0.3s; }
+    .button-card:nth-child(4) { animation-delay: 0.4s; }
+    .button-card:nth-child(5) { animation-delay: 0.5s; }
+    .button-card:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .button-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .button-card:hover::before {
+      left: 100%;
+    }
+
+    .button-card:hover {
+      transform: translateY(-8px) rotateX(5deg);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        var(--shadow-glow);
+      border-color: var(--accent-1);
+    }
+
+    .button-card:active {
+      transform: translateY(-4px) rotateX(2deg);
+    }
+
+    .card-content {
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .button-card:hover .card-icon {
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .mode-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
       transition: all 0.3s ease;
-      transform: scale(1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
     }
 
-    a.button:hover {
-      border-image: linear-gradient(45deg, #0ff, #f0f, #ff0, #0ff);
-      border-image-slice: 1;
-      animation: neon-glow 1s infinite;
-      color: #0ff;
-      transform: scale(1.1);
+    .mode-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+      box-shadow: var(--shadow-glow);
     }
 
-    .joke {
-      margin-top: 2rem;
-      font-style: italic;
+    .joke-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .joke-text {
       font-size: 1.2rem;
-      transition: all 0.2s;
-      min-height: 2rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
     }
 
-    .video-container {
-      margin-top: 2rem;
+    .joke-text.active {
+      color: var(--accent-2);
+      transform: scale(1.05);
     }
 
-    iframe {
-      border: none;
-      border-radius: 12px;
-      width: 320px;
-      height: 180px;
+    .productivity-killer {
+      background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 600;
     }
 
-    .shame {
-      margin-top: 1rem;
-      font-size: 1rem;
-      color: #888;
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .button-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .stats-bar {
+        gap: 1rem;
+      }
+      
+      .stat-item {
+        padding: 0.75rem 1rem;
+        min-width: 100px;
+      }
+      
+      .mode-toggle {
+        top: 1rem;
+        right: 1rem;
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent-1);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-2);
     }
   </style>
 </head>
 <body>
-  <h1>🧠 Distraction Hub</h1>
+  <div class="bg-particles" id="particles"></div>
+  
+  <button class="mode-toggle" onclick="toggleMode()" aria-label="Toggle theme">
+    <span id="modeIcon">🌙</span>
+  </button>
 
-  <div class="button-grid">
-    <a class="button" href="https://www.youtube.com" target="_blank" onmouseover="updateText('Time to fall into a YouTube hole.'); ">YouTube</a>
-    <a class="button" href="https://www.poki.com" target="_blank" onmouseover="updateText('Games that eat hours like candy.'); ">Poki Games</a>
-    <a class="button" href="https://web.whatsapp.com" target="_blank" onmouseover="updateText('Pretending to be social.'); ">WhatsApp Web</a>
-    <a class="button" href="https://www.reddit.com" target="_blank" onmouseover="updateText('Scrolling endlessly. Worth it.'); ">Reddit</a>
-    <a class="button" href="https://chat.openai.com" target="_blank" onmouseover="updateText('Talking to a robot instead of doing your work.');">ChatGPT</a>
-    <a class="button" href="https://www.google.com" target="_blank" onmouseover="updateText('Procrastinate.');">Google</a>
+  <div class="container">
+    <div class="header-section">
+      <h1>🧠 Distraction Hub</h1>
+      <p class="subtitle">Where productivity goes to die ⚰️</p>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-number" id="timeWasted">0</div>
+        <div class="stat-label">Seconds Wasted</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="clickCount">0</div>
+        <div class="stat-label">Clicks Made</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="hoversCount">0</div>
+        <div class="stat-label">Hovers</div>
+      </div>
+    </div>
+
+    <div class="button-grid">
+      <a class="button-card" href="https://www.youtube.com" target="_blank" 
+         onmouseover="updateJoke('Falling into the infinite scroll of cat videos and conspiracy theories')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">📺</span>
+          <div class="card-title">YouTube</div>
+          <div class="card-description">Where 5 minutes becomes 5 hours</div>
+        </div>
+      </a>
+
+      <a class="button-card" href="https://www.poki.com" target="_blank" 
+         onmouseover="updateJoke('Just one more game... said 3 hours ago')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">🎮</span>
+          <div class="card-title">Poki Games</div>
+          <div class="card-description">Casual games, serious addiction</div>
+        </div>
+      </a>
+
+      <a class="button-card" href="https://web.whatsapp.com" target="_blank" 
+         onmouseover="updateJoke('Checking if anyone messaged... they didn\\'t')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">💬</span>
+          <div class="card-title">WhatsApp Web</div>
+          <div class="card-description">Pretending to be social</div>
+        </div>
+      </a>
+
+      <a class="button-card" href="https://www.reddit.com" target="_blank" 
+         onmouseover="updateJoke('Scrolling through r/mildlyinteresting for the 47th time today')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">🔴</span>
+          <div class="card-title">Reddit</div>
+          <div class="card-description">The front page of procrastination</div>
+        </div>
+      </a>
+
+      <a class="button-card" href="https://chat.openai.com" target="_blank" 
+         onmouseover="updateJoke('Asking ChatGPT to do your work while you avoid doing your work')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">🤖</span>
+          <div class="card-title">ChatGPT</div>
+          <div class="card-description">Your AI-powered excuse generator</div>
+        </div>
+      </a>
+
+      <a class="button-card" href="https://www.google.com" target="_blank" 
+         onmouseover="updateJoke('Googling \\'how to be productive\\' instead of being productive')" 
+         onclick="incrementClicks()">
+        <div class="card-content">
+          <span class="card-icon">🔍</span>
+          <div class="card-title">Google</div>
+          <div class="card-description">Gateway to infinite rabbit holes</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="joke-section">
+      <div class="joke-text" id="jokeText">
+        Hover over a button to unlock a new level of <span class="productivity-killer">productivity destruction</span>
+      </div>
+    </div>
   </div>
 
-  <div class="joke" id="joke">Hover on a button to feel the rot set in...</div>
-  <div class="shame" id="shameCounter">Shame Counter: 0s</div>
-
   <script>
-    const updateText = (text) => {
-      document.getElementById('joke').innerText = text;
-    };
+    // Stats tracking
+    let timeWasted = 0;
+    let clickCount = 0;
+    let hoversCount = 0;
 
-    let counter = 0;
+    // Update time counter
     setInterval(() => {
-      counter++;
-      document.getElementById("shameCounter").innerText = `Shame Counter: ${counter}s`;
+      timeWasted++;
+      document.getElementById('timeWasted').textContent = timeWasted.toLocaleString();
     }, 1000);
+
+    // Joke system
+    function updateJoke(text) {
+      hoversCount++;
+      document.getElementById('hoversCount').textContent = hoversCount.toLocaleString();
+      
+      const jokeElement = document.getElementById('jokeText');
+      jokeElement.textContent = text;
+      jokeElement.classList.add('active');
+      
+      setTimeout(() => {
+        jokeElement.classList.remove('active');
+      }, 3000);
+    }
+
+    function incrementClicks() {
+      clickCount++;
+      document.getElementById('clickCount').textContent = clickCount.toLocaleString();
+    }
+
+    // Theme toggle
+    function toggleMode() {
+      document.body.classList.toggle('light');
+      const icon = document.getElementById('modeIcon');
+      icon.textContent = document.body.classList.contains('light') ? '☀️' : '🌙';
+    }
+
+    // Particle system
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 20 + 's';
+      particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+      
+      const colors = ['var(--accent-1)', 'var(--accent-2)', 'var(--accent-3)'];
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      
+      document.getElementById('particles').appendChild(particle);
+      
+      setTimeout(() => {
+        particle.remove();
+      }, 25000);
+    }
+
+    // Create particles periodically
+    setInterval(createParticle, 3000);
+
+    // Initial particles
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createParticle, i * 1000);
+    }
+
+    // Add some easter eggs
+    let konamiCode = [];
+    const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
+
+    document.addEventListener('keydown', (e) => {
+      konamiCode.push(e.keyCode);
+      if (konamiCode.length > konamiSequence.length) {
+        konamiCode.shift();
+      }
+      
+      if (konamiCode.join(',') === konamiSequence.join(',')) {
+        document.body.style.animation = 'rainbow 2s infinite';
+        setTimeout(() => {
+          document.body.style.animation = '';
+        }, 5000);
+      }
+    });
+
+    // Rainbow animation for easter egg
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes rainbow {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
