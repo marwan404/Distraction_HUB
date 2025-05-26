@@ -598,49 +598,58 @@
     // Joke system with typing animation
     let currentJoke = '';
     let jokeTimeout;
+    let isTyping = false;
+    let typingInterval;
     
     function typeText(element, text, speed = 50) {
+      // Clear any existing typing animation
+      if (typingInterval) {
+        clearInterval(typingInterval);
+      }
+      
+      // Clear any existing timeouts
+      if (jokeTimeout) {
+        clearTimeout(jokeTimeout);
+      }
+      
+      isTyping = true;
       element.classList.add('typing');
       element.textContent = '';
       let i = 0;
       
-      const typeChar = () => {
+      typingInterval = setInterval(() => {
         if (i < text.length) {
           element.textContent += text.charAt(i);
           i++;
-          setTimeout(typeChar, speed);
         } else {
+          clearInterval(typingInterval);
+          isTyping = false;
           setTimeout(() => {
             element.classList.remove('typing');
           }, 1000);
         }
-      };
-      
-      typeChar();
+      }, speed);
     }
 
     function updateJoke(text) {
       hoversCount++;
       document.getElementById('hoversCount').textContent = hoversCount.toLocaleString();
       
-      if (currentJoke === text) return; // Don't retype the same joke
+      if (currentJoke === text && !isTyping) return; // Don't retype the same joke unless we're in the middle of typing
       currentJoke = text;
       
       const jokeElement = document.getElementById('jokeText');
-      
-      // Clear any existing timeout
-      if (jokeTimeout) {
-        clearTimeout(jokeTimeout);
-      }
       
       // Start typing animation
       typeText(jokeElement, text, 30);
       
       // Reset to default after 5 seconds
       jokeTimeout = setTimeout(() => {
-        const defaultText = 'Hover over a button to unlock a new level of productivity destruction';
-        typeText(jokeElement, defaultText, 25);
-        currentJoke = '';
+        if (!isTyping) { // Only reset if we're not currently typing
+          const defaultText = 'Hover over a button to unlock a new level of productivity destruction';
+          typeText(jokeElement, defaultText, 25);
+          currentJoke = '';
+        }
       }, 5000);
     }
 
