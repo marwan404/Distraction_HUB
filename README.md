@@ -43,67 +43,11 @@ Distraction_HUB/
 
 ---
 
-## 🎯 How to Use
-
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/marwan404/Distraction_HUB.git
-   cd Distraction_HUB
-   ```
-
-2. **Open in browser**
-   Open `index.html` in any modern browser.
-
-3. **Explore**
-   - Click a few links.
-   - Try the secret input codes 😉.
-   - Hit Panic Mode when the boss walks by.
-
----
-
-## 📦 Hosting
-
-Want to share it online? You can deploy it easily via:
-
-- [GitHub Pages](https://pages.github.com/)
-- [Netlify](https://www.netlify.com/)
-- [Vercel](https://vercel.com/)
-
----
-
 ## 🧠 Future Plans
 
 - Add customizable link tiles
 - Create multiple fake "work mode" templates (Docs, IDE, Terminal)
-- Dark mode toggle (with localStorage support)
 - Mobile responsiveness
-
----
-
-## 🤝 Contributing
-
-Pull requests are welcome! Feel free to fork the project and make your own distractions.
-
-1. Fork it 🍴  
-2. Create your feature branch  
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-3. Commit your changes  
-   ```bash
-   git commit -m "Add awesome feature"
-   ```
-4. Push to the branch  
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-5. Open a Pull Request 🎉
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ---
 
